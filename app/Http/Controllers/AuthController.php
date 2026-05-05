@@ -29,7 +29,7 @@ class AuthController extends Controller
         return redirect('/login');
     }
 
-    // Login (WEB)
+    // Login (web)
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -65,7 +65,7 @@ class AuthController extends Controller
         return Auth::user();
     }
 
-    // Logout (WEB)
+    // Logout (web)
     public function logout(Request $request)
     {
         Auth::logout();

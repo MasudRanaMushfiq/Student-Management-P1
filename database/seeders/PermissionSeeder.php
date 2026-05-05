@@ -16,7 +16,6 @@ class PermissionSeeder extends Seeder
     {
         Permission::create(['name' => 'view students']);
         Permission::create(['name' => 'edit students']);
-        Permission::create(['name' => 'delete students']);
         Permission::create(['name' => 'assign hall']);
         Permission::create(['name' => 'manage departments']);
     }

@@ -13,12 +13,17 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::all();
+        $students = Student::paginate(10);
 
         return response()->json([
             'status' => true,
-            'count' => $students->count(),
-            'data' => $students
+            'data' => $students->items(),
+            'pagination' => [
+                'current_page' => $students->currentPage(),
+                'last_page' => $students->lastPage(),
+                'per_page' => $students->perPage(),
+                'total' => $students->total(),
+            ]
         ]);
     }
 

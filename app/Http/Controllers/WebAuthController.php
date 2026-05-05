@@ -8,21 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class WebAuthController extends Controller
 {   
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW LOGIN PAGE
-    |--------------------------------------------------------------------------
-    */
+
+    // SHOW LOGIN PAGE
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGIN
-    |--------------------------------------------------------------------------
-    */
+
+    // LOGIN
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
