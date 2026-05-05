@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Student>
  */
+
+/**
+ * @extends Factory<Student>
+ */
 class StudentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
+
             // Basic Identity
             'exam_roll' => $this->faker->unique()->numerify('EXM#######'),
             'applicant_id' => $this->faker->unique()->numerify('APP#####'),
@@ -56,13 +56,32 @@ class StudentFactory extends Factory
             'hsc_ltrgrd' => 'A',
             'hsc_institute' => $this->faker->company(),
 
-            // Admission
-            'unit' => 'A',
+            // Admission - RANDOMIZED
+            'unit' => $this->faker->randomElement(['A', 'B', 'C']),
             'faculty' => 'Engineering',
-            'department' => 'CSE',
-            'hall' => 'Main Hall',
-            'hall_code' => 'MH01',
-            'department_code' => 'CSE',
+
+            'department' => $this->faker->randomElement([
+                'CSE',
+                'EEE',
+                'BBA'
+            ]),
+
+            'hall' => $this->faker->randomElement([
+                'Bijoy 24 Hall',
+                'Motihar Hall',
+                'Hobibur Hall'
+            ]),
+
+            'hall_code' => $this->faker->randomElement([
+                'BI01',
+                'MO02',
+                'HO03'
+            ]),
+
+            'department_code' => function (array $attributes) {
+                return $attributes['department'];
+            },
+
             'class_roll' => $this->faker->numerify('####'),
             'quota' => 'General',
             'category' => 'Regular',

@@ -16,7 +16,6 @@
             background: #f4f6f9;
         }
 
-        /* SIDEBAR */
         .sidebar {
             position: fixed;
             left: 0;
@@ -47,31 +46,22 @@
             color: white;
         }
 
-        /* MAIN AREA */
         .main {
             margin-left: 220px;
         }
 
-        /* TOP BAR */
         .topbar {
             background: white;
             padding: 15px 20px;
             border-bottom: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-        }
-
-        .topbar h1 {
-            font-size: 18px;
-            margin: 0;
         }
 
         .content {
             padding: 20px;
         }
 
-        /* CARD */
         .card {
             background: white;
             padding: 20px;
@@ -85,7 +75,6 @@
             font-size: 16px;
         }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -103,9 +92,10 @@
         }
 
         select {
-            padding: 6px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
         }
 
         .btn {
@@ -129,24 +119,18 @@
         .btn-danger:hover {
             background: #b91c1c;
         }
-
     </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>Super Admin</h2>
 
     <a href="#">Dashboard</a>
     <a href="#">Users</a>
     <a href="#">Students</a>
-
-    <!-- ✅ AUDIT LOGS (PROPER LARAVEL ROUTE) -->
     <a href="{{ route('admin.logs') }}">Audit Logs</a>
-
-    <a href="#">Settings</a>
 
     <form method="POST" action="/logout" style="margin-top: 20px; padding: 0 20px;">
         @csrf
@@ -154,10 +138,8 @@
     </form>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-    <!-- TOP BAR -->
     <div class="topbar">
         <h1>Dashboard</h1>
         <div>Welcome, {{ auth()->user()->name }}</div>
@@ -171,49 +153,38 @@
 
             <table>
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Assign</th>
-                    </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Assign</th>
+                </tr>
                 </thead>
 
                 <tbody>
-                    @foreach($users as $user)
-                        <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
+                @foreach($users as $user)
+                    <tr>
+                        <td>{{ $user->id }}</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ $user->getRoleNames()->first() ?? 'No Role' }}</td>
 
-                            <td>
-                                {{ $user->getRoleNames()->first() ?? 'No Role' }}
-                            </td>
+                        <td>
+                            <form method="POST" action="/admin/users/{{ $user->id }}/role">
+                                @csrf
 
-                            <td>
-                                <form method="POST" action="/admin/users/{{ $user->id }}/role">
-                                    @csrf
+                                <select name="role">
+                                    <option value="dept">Dept</option>
+                                    <option value="exam-controller">Exam Controller</option>
+                                    <option value="super-admin">Super Admin</option>
+                                </select>
 
-                                    <select name="role">
-                                        <option value="dept" {{ $user->hasRole('dept') ? 'selected' : '' }}>
-                                            Dept
-                                        </option>
-
-                                        <option value="exam-controller" {{ $user->hasRole('exam-controller') ? 'selected' : '' }}>
-                                            Exam Controller
-                                        </option>
-
-                                        <option value="super-admin" {{ $user->hasRole('super-admin') ? 'selected' : '' }}>
-                                            Super Admin
-                                        </option>
-                                    </select>
-
-                                    <button type="submit" class="btn">Assign</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
+                                <button type="submit" class="btn">Assign</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -222,43 +193,70 @@
         <div class="card">
             <h2>Students</h2>
 
-            <a href="/admin/students">
-                <button class="btn">View All Students</button>
+            <!-- FILTER FORM (SESSION + DEPT) -->
+            <form method="GET" action="{{ url('/admin/dashboard') }}" style="margin-bottom: 15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+
+                <!-- SESSION -->
+                <select name="table" onchange="this.form.submit()">
+                    @foreach($tableMap as $key => $label)
+                        <option value="{{ $key }}" {{ $table == $key ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <!-- DEPT FILTER -->
+                <select name="department" onchange="this.form.submit()">
+                    <option value="">All Dept</option>
+                    <option value="CSE" {{ request('department') == 'CSE' ? 'selected' : '' }}>CSE</option>
+                    <option value="EEE" {{ request('department') == 'EEE' ? 'selected' : '' }}>EEE</option>
+                    <option value="BBA" {{ request('department') == 'BBA' ? 'selected' : '' }}>BBA</option>
+                </select>
+
+            </form>
+
+            <p style="font-size: 13px; color: #555;">
+                Current Table: <b>{{ strtoupper($table) }}</b>
+                @if(request('department'))
+                    | Dept: <b>{{ request('department') }}</b>
+                @endif
+            </p>
+
+            <a href="/admin/students?table={{ $table }}&department={{ request('department') }}">
+                <button class="btn">View Full Students List</button>
             </a>
         </div>
 
-        <!-- RECENT LOGS PREVIEW (OPTIONAL BUT USEFUL) -->
+        <!-- RECENT LOGS -->
         <div class="card">
             <h2>Recent Activity</h2>
 
             <table>
                 <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Model</th>
-                        <th>Time</th>
-                    </tr>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Model</th>
+                    <th>Time</th>
+                </tr>
                 </thead>
 
                 <tbody>
-                    @foreach($logs as $log)
-                        <tr>
-                            <td>{{ $log->user->name ?? 'System' }}</td>
-                            <td>{{ $log->action }}</td>
-                            <td>{{ class_basename($log->model_type) }}</td>
-                            <td>{{ $log->created_at }}</td>
-                        </tr>
-                    @endforeach
+                @foreach($logs as $log)
+                    <tr>
+                        <td>{{ $log->user->name ?? 'System' }}</td>
+                        <td>{{ $log->action }}</td>
+                        <td>{{ class_basename($log->model_type) }}</td>
+                        <td>{{ $log->created_at }}</td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
 
         </div>
 
     </div>
-
 </div>
 
 </body>
 </html>
-

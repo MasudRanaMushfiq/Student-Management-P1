@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             AdminUserSeeder::class,
+            StudentPartitionSeeder::class,
         ]);
 
         // Optional default user

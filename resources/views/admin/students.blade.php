@@ -31,13 +31,12 @@
             margin: 0;
         }
 
-        .header p {
-            margin: 5px 0 0;
-            color: #666;
-            font-size: 14px;
+        .meta {
+            font-size: 13px;
+            color: #555;
+            margin-top: 5px;
         }
 
-        /* BACK BUTTON */
         .back-btn {
             display: inline-block;
             margin-bottom: 15px;
@@ -48,11 +47,6 @@
             border-radius: 6px;
             text-decoration: none;
             color: #333;
-            cursor: pointer;
-        }
-
-        .back-btn:hover {
-            background: #f1f1f1;
         }
 
         .card {
@@ -76,19 +70,17 @@
 
         th {
             background: #f9fafb;
-            font-weight: 600;
-            font-size: 13px;
-            color: #333;
         }
 
-        tr:hover {
-            background: #fafafa;
-        }
-
+        /* SIMPLE PAGINATION STYLE */
         .pagination {
             margin-top: 15px;
             display: flex;
             justify-content: center;
+        }
+
+        .pagination nav {
+            font-size: 13px;
         }
 
         .pagination svg {
@@ -96,15 +88,23 @@
             height: 14px;
         }
 
-        .pagination a, .pagination span {
-            font-size: 16px;
+        .pagination a,
+        .pagination span {
+            padding: 4px 8px;
+            margin: 0 2px;
+            border-radius: 4px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #333;
+            font-size: 13px;
         }
 
-        .total {
-            font-size: 13px;
-            color: #555;
-            margin-top: 5px;
+        .pagination .active span {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
         }
+
     </style>
 </head>
 
@@ -112,16 +112,22 @@
 
 <div class="container">
 
-    <!-- HEADER -->
     <div class="header">
         <h1>All Students</h1>
-        <p class="total">Total Students: {{ $students->total() }}</p>
+
+        <!-- SHOW ONLY TABLE NAME -->
+        <p class="meta">
+            Current Session/Table:
+            <b>{{ strtoupper($table) }}</b>
+        </p>
+
+        <p class="meta">
+            Total Students: {{ $students->total() }}
+        </p>
     </div>
 
-    <!-- BACK BUTTON -->
     <a href="javascript:history.back()" class="back-btn">← Back</a>
 
-    <!-- TABLE CARD -->
     <div class="card">
 
         <table>
@@ -154,9 +160,9 @@
 
     </div>
 
-    <!-- PAGINATION -->
+    <!-- CLEAN PAGINATION -->
     <div class="pagination">
-        {{ $students->links() }}
+        {{ $students->appends(['table' => $table])->links() }}
     </div>
 
 </div>
