@@ -142,6 +142,10 @@
     <a href="#">Dashboard</a>
     <a href="#">Users</a>
     <a href="#">Students</a>
+
+    <!-- ✅ AUDIT LOGS (PROPER LARAVEL ROUTE) -->
+    <a href="{{ route('admin.logs') }}">Audit Logs</a>
+
     <a href="#">Settings</a>
 
     <form method="POST" action="/logout" style="margin-top: 20px; padding: 0 20px;">
@@ -217,9 +221,38 @@
         <!-- STUDENTS -->
         <div class="card">
             <h2>Students</h2>
+
             <a href="/admin/students">
                 <button class="btn">View All Students</button>
             </a>
+        </div>
+
+        <!-- RECENT LOGS PREVIEW (OPTIONAL BUT USEFUL) -->
+        <div class="card">
+            <h2>Recent Activity</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Model</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach($logs as $log)
+                        <tr>
+                            <td>{{ $log->user->name ?? 'System' }}</td>
+                            <td>{{ $log->action }}</td>
+                            <td>{{ class_basename($log->model_type) }}</td>
+                            <td>{{ $log->created_at }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
         </div>
 
     </div>
@@ -228,5 +261,4 @@
 
 </body>
 </html>
-
 
