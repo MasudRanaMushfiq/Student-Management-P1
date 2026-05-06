@@ -10,6 +10,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\DepartmentController;
 
+
+
+
+    Route::get('/', function () {
+        return redirect('/login');
+    });
+
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES
