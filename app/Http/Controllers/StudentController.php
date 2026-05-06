@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateStudentRequest;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 
 class StudentController extends Controller
@@ -196,5 +198,20 @@ class StudentController extends Controller
             'data' => $student
         ]);
     }
+
+    //pdf export
+    public function exportPdf(Request $request)
+    {
+        $table = $request->get('table', 'student13');
+
+        $students = DB::table($table)
+            ->limit(200)   // CRITICAL FIX
+            ->get();
+
+        $pdf = Pdf::loadView('admin.students_pdf', compact('students', 'table'));
+
+        return $pdf->download('admin_students_list.pdf');
+    }
+
 }
 

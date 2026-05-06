@@ -8,13 +8,6 @@ use App\Models\AuditLog;
 
 class StudentObserver
 {
-     private static $oldValues = [];
-
-    public function updating(Student $student)
-    {
-        // store original values BEFORE update
-        self::$oldValues = $student->getOriginal();
-    }
 
     public function updated(Student $student)
     {
@@ -38,8 +31,9 @@ class StudentObserver
             'action'     => 'update',
             'model_type' => Student::class,
             'model_id'   => $student->id,
-            'old_values' => $changes,
-            'new_values' => $changes,
+            // FIXED STRUCTURE
+            'old_values' => collect($changes)->map(fn($v) => $v['old']),
+            'new_values' => collect($changes)->map(fn($v) => $v['new']),
         ]);
     }
 }

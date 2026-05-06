@@ -37,6 +37,12 @@ Route::post('/register', [WebAuthController::class, 'register']);
 
 Route::middleware('auth')->group(function () {
 
+
+    //pdf route
+    Route::get('/students/pdf', [StudentController::class, 'exportPdf']);
+
+    
+
     /*
     |--------------------------------------------------------------------------
     | HOME + LOGOUT

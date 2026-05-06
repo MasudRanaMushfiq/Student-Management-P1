@@ -72,34 +72,22 @@ class WebAuthController extends Controller
     // HANDLE REGISTRATION
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
         ]);
 
-        // Assign role to user
-        $user->assignRole($request->role);
-
-        // Auto login after registration
         Auth::login($user);
 
-        // Redirect based on role
-        if ($user->hasRole('dept')) {
-            return redirect('/dept/home');
-        }
-
-        if ($user->hasRole('exam-controller')) {
-            return redirect('/exam/home');
-        }
-
-        return redirect('/home');
+        return redirect()->route('home')
+            ->with('success', 'Account created successfully');
     }
 
     /*

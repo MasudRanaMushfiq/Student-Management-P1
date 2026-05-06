@@ -3,104 +3,88 @@
 <head>
     <title>Department Dashboard</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px 30px;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .logout-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .logout-btn:hover {
-            background: #c0392b;
+            background: #f5f7fb;
         }
 
         .container {
-            max-width: 900px;
-            margin: 60px auto;
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #555;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-
-        .cards {
-            display: flex;
-            gap: 15px;
-            justify-content: space-between;
-            margin-bottom: 40px;
+            margin-top: 40px;
         }
 
         .card {
-            flex: 1;
-            background: #3498db;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: #0f172a; /* black-blue */
+            padding: 12px 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .logout-btn {
+            background: #2563eb; /* blue */
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 5px;
+        }
+
+        .logout-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* TITLE */
+        h4 {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        p {
+            color: #64748b;
+        }
+
+        /* STATS */
+        .stat-card {
             color: white;
             padding: 20px;
             border-radius: 10px;
+            text-align: center;
+            transition: 0.2s;
         }
 
-        .card h2 {
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card h2 {
             margin: 0;
-            font-size: 30px;
+            font-size: 28px;
         }
 
-        .card span {
-            display: block;
-            margin-top: 8px;
+        .stat-card span {
             font-size: 14px;
             opacity: 0.9;
         }
 
-        .card:nth-child(2) {
-            background: #9b59b6;
-        }
-
-        .card:nth-child(3) {
-            background: #e67e22;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background-color: #2ecc71;
+        /* BUTTON */
+        .btn-custom {
+            background: #2563eb;
             color: white;
-            text-decoration: none;
+            padding: 10px 20px;
             border-radius: 6px;
-            font-size: 16px;
-            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .btn:hover {
-            background-color: #27ae60;
+        .btn-custom:hover {
+            background: #1d4ed8;
+            color: white;
         }
     </style>
 </head>
@@ -109,43 +93,57 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-
     <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit" class="logout-btn">Logout</button>
     </form>
-
 </div>
 
 <div class="container">
 
-    <h1>Department Dashboard</h1>
+    <!-- MAIN CARD -->
+    <div class="card p-4 text-center mb-4">
 
-    <p>Welcome, Department User</p>
+        <h4>Department Dashboard</h4>
+        <p>Welcome, Department User</p>
 
-    <!-- REAL TIME STATS -->
-    <div class="cards">
+        <!-- STATS -->
+        <div class="row g-3">
 
-        <div class="card">
-            <h2>{{ $stats['total_students'] ?? 0 }}</h2>
-            <span>Total Students</span>
+            <div class="col-md-4">
+                <div class="stat-card" style="background:#1e3a8a;">
+                    <h2>{{ $stats['total_students'] ?? 0 }}</h2>
+                    <span>Total Students</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card" style="background:#0f172a;">
+                    <h2>{{ $stats['total_departments'] ?? 0 }}</h2>
+                    <span>Departments</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card" style="background:#2563eb;">
+                    <h2>{{ $stats['active_sessions'] ?? 0 }}</h2>
+                    <span>Sessions</span>
+                </div>
+            </div>
+
         </div>
 
-        <div class="card">
-            <h2>{{ $stats['total_departments'] ?? 0 }}</h2>
-            <span>Departments</span>
-        </div>
-
-        <div class="card">
-            <h2>{{ $stats['active_sessions'] ?? 0 }}</h2>
-            <span>Active Sessions</span>
+        <!-- BUTTON -->
+        <div class="mt-4">
+            <a href="{{ route('dept.students') }}" class="btn-custom">
+                Go to Student Search
+            </a>
+                <a href="{{ url('/students/pdf') }}" class="btn btn-primary">
+    Download PDF
+    </a>
         </div>
 
     </div>
-
-    <a href="{{ route('dept.students') }}" class="btn">
-        Go to Student Search
-    </a>
 
 </div>
 

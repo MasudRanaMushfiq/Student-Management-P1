@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::with('roles')->get();
+        $users = User::with('roles')->latest()->paginate(10);
 
         $logs = AuditLog::with('user')
             ->latest()

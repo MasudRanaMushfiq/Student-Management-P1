@@ -1,0 +1,223 @@
+===============================
+     LARAVEL INFO
+===============================
+Laravel Framework 13.7.0
+
+===============================
+     ROUTES
+===============================
+
+  GET|HEAD        / ........................................................................................................ routes/web.php:16
+  GET|HEAD        admin/dashboard .......................................................... admin.dashboard › Admin\DashboardController@index
+  GET|HEAD        admin/logs .................................................................................. admin.logs › routes/web.php:78
+  GET|HEAD        admin/logs/{id} ........................................................................ admin.logs.show › routes/web.php:83
+  GET|HEAD        admin/students .................................................................... admin.students › StudentController@index
+  GET|HEAD        admin/users ............................................................. admin.users › Admin\UserManagementController@index
+  POST            admin/users/{user}/role ....................................... admin.users.role › Admin\UserManagementController@assignRole
+  POST            api/login ............................................................................................. AuthController@login
+  POST            api/logout ........................................................................................... AuthController@logout
+  POST            api/register ....................................................................................... AuthController@register
+  GET|HEAD        api/students ....................................................................................... StudentController@index
+  GET|HEAD        api/user ............................................................................................... AuthController@user
+  GET|HEAD        api/v1/students ............................... api.student.index › Modules\Student\Http\Controllers\StudentController@index
+  POST            api/v1/students ............................... api.student.store › Modules\Student\Http\Controllers\StudentController@store
+  GET|HEAD        api/v1/students/{student} ....................... api.student.show › Modules\Student\Http\Controllers\StudentController@show
+  PUT|PATCH       api/v1/students/{student} ................... api.student.update › Modules\Student\Http\Controllers\StudentController@update
+  DELETE          api/v1/students/{student} ................. api.student.destroy › Modules\Student\Http\Controllers\StudentController@destroy
+  GET|HEAD        dept/home ....................................................................... dept.home › DepartmentController@dashboard
+  GET|HEAD        dept/students ................................................................... dept.students › DepartmentController@index
+  GET|HEAD        dept/students/advanced-search ................................. dept.students.advanced › DepartmentController@advancedSearch
+  GET|HEAD        dept/students/bulk-search ............................................. dept.students.bulk › DepartmentController@bulkSearch
+  GET|HEAD        dept/students/export .................................................... dept.students.export › DepartmentController@export
+  GET|HEAD        dept/students/search .................................................... dept.students.search › DepartmentController@search
+  GET|HEAD        dept/students/statistics ........................................ dept.students.statistics › DepartmentController@statistics
+  GET|HEAD        dept/students/suggestions ..................................... dept.students.suggestions › DepartmentController@suggestions
+  GET|HEAD        dept/students/{id} .......................................................... dept.students.show › DepartmentController@show
+  GET|HEAD        exam/home ................................................................................... exam.home › routes/web.php:144
+  GET|HEAD        exam/student/edit/{id} .......................................................... exam.student.edit › StudentController@edit
+  GET|HEAD        exam/student/search ..................................................... exam.student.search › StudentController@searchPage
+  GET|HEAD        exam/student/search-result .................................................. exam.student.result › StudentController@search
+  GET|HEAD        exam/student/show/{id} .......................................................... exam.student.show › StudentController@show
+  POST            exam/student/update/{id} .................................................... exam.student.update › StudentController@update
+  GET|HEAD        home .............................................................................................. home › routes/web.php:51
+  GET|HEAD        login .................................................................................. login › WebAuthController@showLogin
+  POST            login .............................................................................................. WebAuthController@login
+  POST            logout ................................................................................... logout › WebAuthController@logout
+  GET|HEAD        register ......................................................................... register › WebAuthController@showRegister
+  POST            register ........................................................................................ WebAuthController@register
+  GET|HEAD        sanctum/csrf-cookie ...................................... sanctum.csrf-cookie › Laravel\Sanctum › CsrfCookieController@show
+  GET|HEAD        storage/{path} ........ storage.local › vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:111
+  PUT             storage/{path} . storage.local.upload › vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
+  GET|HEAD        students .......................................... student.index › Modules\Student\Http\Controllers\StudentController@index
+  POST            students .......................................... student.store › Modules\Student\Http\Controllers\StudentController@store
+  GET|HEAD        students/create ................................. student.create › Modules\Student\Http\Controllers\StudentController@create
+  GET|HEAD        students/pdf ................................................................................... StudentController@exportPdf
+  GET|HEAD        students/{student} .................................. student.show › Modules\Student\Http\Controllers\StudentController@show
+  PUT|PATCH       students/{student} .............................. student.update › Modules\Student\Http\Controllers\StudentController@update
+  DELETE          students/{student} ............................ student.destroy › Modules\Student\Http\Controllers\StudentController@destroy
+  GET|HEAD        students/{student}/edit ............................. student.edit › Modules\Student\Http\Controllers\StudentController@edit
+  GET|HEAD        up ............................. vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:223
+
+                                                                                                                           Showing [50] routes
+
+
+===============================
+     COMPOSER DEPENDENCIES
+===============================
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "laravel/framework": "^13.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^3.0",
+        "nwidart/laravel-modules": "^13.0",
+        "spatie/laravel-permission": "^7.4"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.5",
+        "laravel/pao": "^1.0.6",
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^12.5.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan migrate --force",
+            "npm install --ignore-scripts",
+            "npm run build"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi @no_additional_args",
+            "@php artisan test"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        },
+        "merge-plugin": {
+            "include": [
+                "Modules/*/composer.json"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
+            "wikimedia/composer-merge-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
+
+===============================
+     MIGRATIONS
+===============================
+ Volume in drive C is OS
+ Volume Serial Number is 6AE8-9BE5
+
+ Directory of C:\Users\User\Desktop\PractiseZone\PHP Laravel\Student Management P1\database\migrations
+
+05-May-26  05:42 PM    <DIR>          .
+05-May-26  12:49 AM    <DIR>          ..
+28-Apr-26  11:15 PM             1,473 0001_01_01_000000_create_users_table.php
+28-Apr-26  11:15 PM               873 0001_01_01_000001_create_cache_table.php
+28-Apr-26  11:15 PM             1,813 0001_01_01_000002_create_jobs_table.php
+05-May-26  07:35 AM               863 2026_05_05_013544_create_personal_access_tokens_table.php
+05-May-26  08:15 AM               693 2026_05_05_020819_create_departments_table.php
+05-May-26  08:16 AM               736 2026_05_05_020827_create_halls_table.php
+05-May-26  08:17 AM             4,111 2026_05_05_020837_create_students_table.php
+05-May-26  08:44 AM             6,442 2026_05_05_024439_create_permission_tables.php
+05-May-26  06:00 PM               968 2026_05_05_114215_create_audit_logs_table.php
+               9 File(s)         17,972 bytes
+               2 Dir(s)  44,279,214,080 bytes free
+
+===============================
+     MODELS
+===============================
+ Volume in drive C is OS
+ Volume Serial Number is 6AE8-9BE5
+
+ Directory of C:\Users\User\Desktop\PractiseZone\PHP Laravel\Student Management P1\app\Models
+
+05-May-26  05:43 PM    <DIR>          .
+06-May-26  10:12 AM    <DIR>          ..
+05-May-26  06:01 PM               447 AuditLog.php
+05-May-26  08:08 AM               247 Department.php
+05-May-26  08:08 AM               235 Hall.php
+05-May-26  06:32 PM               296 Student.php
+05-May-26  08:46 AM               940 User.php
+               5 File(s)          2,165 bytes
+               2 Dir(s)  44,279,214,080 bytes free
+
+===============================
+     CONTROLLERS
+===============================
+ Volume in drive C is OS
+ Volume Serial Number is 6AE8-9BE5
+
+ Directory of C:\Users\User\Desktop\PractiseZone\PHP Laravel\Student Management P1\app\Http\Controllers
+
+05-May-26  10:42 AM    <DIR>          .
+05-May-26  08:00 AM    <DIR>          ..
+06-May-26  01:25 AM    <DIR>          Admin
+05-May-26  04:14 PM             1,764 AuthController.php
+28-Apr-26  11:15 PM                77 Controller.php
+06-May-26  11:06 AM             3,160 DepartmentController.php
+05-May-26  10:54 AM             1,023 ExamController.php
+05-May-26  08:08 AM               843 HallController.php
+06-May-26  06:27 PM             5,677 StudentController.php
+06-May-26  01:06 PM             2,876 WebAuthController.php
+               7 File(s)         15,420 bytes
+               3 Dir(s)  44,279,214,080 bytes free

@@ -13,4 +13,9 @@ class Student extends Model
     protected $fillable = [
         'fullname'
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(\App\Models\Department::class);
+    }
 }

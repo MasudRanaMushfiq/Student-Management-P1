@@ -128,6 +128,11 @@
 
     <a href="javascript:history.back()" class="back-btn">← Back</a>
 
+    <a href="{{ url('students/pdf') }}" target="_blank">
+    Download PDF
+    </a>
+
+
     <div class="card">
 
         <table>

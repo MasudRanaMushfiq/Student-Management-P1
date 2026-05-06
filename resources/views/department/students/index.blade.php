@@ -34,6 +34,8 @@
         <a href="{{ route('dept.home') }}" class="btn btn-secondary btn-sm">Back</a>
     </div>
 
+
+
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
