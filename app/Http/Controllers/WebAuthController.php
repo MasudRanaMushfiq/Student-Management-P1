@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -9,70 +10,105 @@ use Illuminate\Support\Facades\Auth;
 class WebAuthController extends Controller
 {   
 
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN METHODS
+    |--------------------------------------------------------------------------
+    */
+    
     // SHOW LOGIN PAGE
     public function showLogin()
     {
         return view('auth.login');
     }
 
-
-    // LOGIN
-
+    // HANDLE LOGIN
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if (Auth::attempt($credentials)) {
-
+        if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
+            // Role-based redirect after login
             if ($user->hasRole('super-admin')) {
-                return redirect('/admin/dashboard');
+                return redirect()->intended('/admin/dashboard');
             }
 
             if ($user->hasRole('dept')) {
-                return redirect('/dept/home');
+                return redirect()->intended('/dept/home');
             }
 
             if ($user->hasRole('exam-controller')) {
-                return redirect('/exam/home');
+                return redirect()->intended('/exam/home');
             }
 
-            return redirect('/home');
+            // Default redirect
+            return redirect()->intended('/home');
         }
 
-        return back()->with('error', 'Invalid login');
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | REGISTER
+    | REGISTER METHODS
     |--------------------------------------------------------------------------
     */
+    
+    // SHOW REGISTER PAGE
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    // HANDLE REGISTRATION
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6|confirmed',
+            'role' => 'required|in:dept,exam-controller'
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/login')->with('success', 'User created successfully');
+        // Assign role to user
+        $user->assignRole($request->role);
+
+        // Auto login after registration
+        Auth::login($user);
+
+        // Redirect based on role
+        if ($user->hasRole('dept')) {
+            return redirect('/dept/home');
+        }
+
+        if ($user->hasRole('exam-controller')) {
+            return redirect('/exam/home');
+        }
+
+        return redirect('/home');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | LOGOUT
+    | LOGOUT METHOD
     |--------------------------------------------------------------------------
     */
+    
     public function logout(Request $request)
     {
         Auth::logout();
@@ -83,3 +119,4 @@ class WebAuthController extends Controller
         return redirect('/login');
     }
 }
+

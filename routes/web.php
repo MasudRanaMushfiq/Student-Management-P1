@@ -8,8 +8,7 @@ use App\Models\User;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\StudentController;
-
-
+use App\Http\Controllers\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +19,7 @@ use App\Http\Controllers\StudentController;
 Route::get('/login', [WebAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [WebAuthController::class, 'login']);
 
-Route::get('/register', function () {
-    return view('auth.register');
-});
-
+Route::get('/register', [WebAuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [WebAuthController::class, 'register']);
 
 /*
@@ -40,10 +36,20 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/home', function () {
+        $user = auth()->user();
+        
+        if ($user->hasRole('super-admin')) {
+            return redirect('/admin/dashboard');
+        } elseif ($user->hasRole('dept')) {
+            return redirect('/dept/home');
+        } elseif ($user->hasRole('exam-controller')) {
+            return redirect('/exam/home');
+        }
+        
         return view('home');
-    });
+    })->name('home');
 
-    Route::post('/logout', [WebAuthController::class, 'logout']);
+    Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
     /*
     |--------------------------------------------------------------------------
@@ -54,13 +60,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:super-admin')
         ->group(function () {
 
-            Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index']);
+            Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 
             Route::get('/logs', function () {
-                $logs = AuditLog::with('user')
-                    ->latest()
-                    ->paginate(20);
-
+                $logs = AuditLog::with('user')->latest()->paginate(20);
                 return view('admin.logs', compact('logs'));
             })->name('admin.logs');
 
@@ -69,11 +72,10 @@ Route::middleware('auth')->group(function () {
                 return view('admin.log_show', compact('log'));
             })->name('admin.logs.show');
 
-            Route::get('/users', [UserManagementController::class, 'index']);
-            Route::post('/users/{user}/role', [UserManagementController::class, 'assignRole']);
+            Route::get('/users', [UserManagementController::class, 'index'])->name('admin.users');
+            Route::post('/users/{user}/role', [UserManagementController::class, 'assignRole'])->name('admin.users.role');
 
-            Route::get('/students', [StudentController::class, 'index'])
-                ->name('admin.students');
+            Route::get('/students', [StudentController::class, 'index'])->name('admin.students');
         });
 
     /*
@@ -81,14 +83,41 @@ Route::middleware('auth')->group(function () {
     | DEPARTMENT ROUTES
     |--------------------------------------------------------------------------
     */
-    Route::prefix('department')
-        ->middleware('role:department')
-        ->group(function () {
+    Route::prefix('dept')
+    ->middleware('role:dept')
+    ->group(function () {
 
-            Route::get('/home', function () {
-                return view('department.home');
-            });
-        });
+        // Dashboard
+        Route::get('/home', [DepartmentController::class, 'dashboard'])
+            ->name('dept.home');
+
+        // Student Search Page
+        Route::get('/students', [DepartmentController::class, 'index'])
+            ->name('dept.students');
+
+        // Search
+        Route::get('/students/search', [DepartmentController::class, 'search'])
+            ->name('dept.students.search');
+
+        Route::get('/students/advanced-search', [DepartmentController::class, 'advancedSearch'])
+            ->name('dept.students.advanced');
+
+        Route::get('/students/bulk-search', [DepartmentController::class, 'bulkSearch'])
+            ->name('dept.students.bulk');
+
+        Route::get('/students/statistics', [DepartmentController::class, 'statistics'])
+            ->name('dept.students.statistics');
+
+        Route::get('/students/export', [DepartmentController::class, 'export'])
+            ->name('dept.students.export');
+
+        Route::get('/students/suggestions', [DepartmentController::class, 'suggestions'])
+            ->name('dept.students.suggestions');
+
+        Route::get('/students/{id}', [DepartmentController::class, 'show'])
+            ->where('id', '[0-9]+')
+            ->name('dept.students.show');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -101,20 +130,16 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/home', function () {
                 return view('exam.home');
-            });
+            })->name('exam.home');
 
-            Route::get('/student/search', [StudentController::class, 'searchPage']);
-            Route::get('/student/search-result', [StudentController::class, 'search']);
+            Route::get('/student/search', [StudentController::class, 'searchPage'])->name('exam.student.search');
+            Route::get('/student/search-result', [StudentController::class, 'search'])->name('exam.student.result');
 
-            Route::get('/student/show/{id}', [StudentController::class, 'show']);
+            Route::get('/student/show/{id}', [StudentController::class, 'show'])->name('exam.student.show');
 
-            Route::get('/student/edit/{id}', [StudentController::class, 'edit']);
-            Route::post('/student/update/{id}', [StudentController::class, 'update']);
+            Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('exam.student.edit');
+            Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('exam.student.update');
         });
 
 });
-
-
-
-
 
