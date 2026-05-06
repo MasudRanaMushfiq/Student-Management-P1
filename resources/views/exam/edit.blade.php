@@ -46,15 +46,15 @@
             margin-bottom: 15px;
             padding: 8px 12px;
             font-size: 14px;
-            background: #ffffff;
+            background: #2563eb;
             border: 1px solid #ddd;
             border-radius: 6px;
             text-decoration: none;
-            color: #333;
+            color: #fff;
         }
 
         .back-btn:hover {
-            background: #f1f1f1;
+            background: #042ff1;
         }
 
         h2 {

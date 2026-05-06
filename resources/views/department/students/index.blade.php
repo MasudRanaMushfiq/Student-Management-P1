@@ -31,7 +31,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Student Search</h4>
-        <a href="{{ route('dept.home') }}" class="btn btn-secondary btn-sm">Back</a>
+        <a href="{{ route('dept.home') }}" class="btn btn-primary btn-sm">Back</a>
     </div>
 
 
@@ -60,9 +60,9 @@
                     <label class="form-label">Hall</label>
                     <select name="hall" class="form-select">
                         <option value="">All</option>
-                        <option value="Motihar" {{ request('hall') == 'Motihar' ? 'selected' : '' }}>Motihar</option>
-                        <option value="Shaheed" {{ request('hall') == 'Shaheed' ? 'selected' : '' }}>Shaheed</option>
-                        <option value="Nawab" {{ request('hall') == 'Nawab' ? 'selected' : '' }}>Nawab</option>
+                        <option value="Motihar Hall" {{ request('hall') == 'Motihar Hall' ? 'selected' : '' }}>Motihar Hall</option>
+                        <option value="Bijoy 24 Hall" {{ request('hall') == 'Bijoy 24 Hall' ? 'selected' : '' }}>Bijoy 24 Hall</option>
+                        <option value="Hobibur Hall" {{ request('hall') == 'Hobibur Hall' ? 'selected' : '' }}>Hobibur Hall</option>
                     </select>
                 </div>
 

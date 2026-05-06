@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Student Details</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
@@ -14,103 +13,122 @@
         body {
             margin: 0;
             background: #f4f6f9;
+            color: #111827;
         }
 
+        /* TOP BAR */
         .topbar {
-            background: #fff;
-            padding: 15px 20px;
-            border-bottom: 1px solid #ddd;
+            background: #ffffff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .topbar h1 {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: auto;
-            padding: 20px;
+            padding: 18px;
         }
 
         /* BACK BUTTON */
         .back-btn {
             display: inline-block;
-            margin-bottom: 15px;
-            padding: 8px 12px;
-            font-size: 14px;
-            background: #ffffff;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            font-size: 13px;
+            background: #2563eb;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 5px;
             text-decoration: none;
-            color: #333;
+            color: #fff;
         }
 
         .back-btn:hover {
-            background: #f1f1f1;
+            background: #0048d8;
         }
 
+        /* CARD */
         .card {
             background: #fff;
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #eee;
         }
 
-        h2 {
-            margin-top: 0;
-            font-size: 16px;
-            border-bottom: 1px solid #eee;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
             padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
         }
 
-        h3 {
-            margin-top: 15px;
-            font-size: 14px;
+        .header h2 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .success {
+            color: #16a34a;
+            font-size: 13px;
+            margin: 5px 0 10px;
+        }
+
+        /* SECTION */
+        .section {
+            margin-top: 12px;
+        }
+
+        .section h3 {
+            margin: 10px 0;
+            font-size: 13px;
             color: #2563eb;
+            font-weight: 600;
         }
 
+        /* GRID */
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px 15px;
-            font-size: 14px;
+            gap: 8px;
         }
 
         .item {
             background: #f9fafb;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid #f1f5f9;
         }
 
         .label {
-            font-weight: bold;
-            color: #444;
+            font-weight: 600;
+            color: #374151;
         }
 
-        .success {
-            color: green;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
+        /* BUTTON */
         .btn {
             display: inline-block;
-            margin-top: 15px;
-            padding: 10px 15px;
+            margin-top: 14px;
+            padding: 8px 12px;
             background: #2563eb;
             color: white;
-            border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .btn:hover {
             background: #1d4ed8;
         }
 
+        /* RESPONSIVE */
         @media (max-width: 900px) {
             .grid {
                 grid-template-columns: 1fr 1fr;
@@ -122,7 +140,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
     </style>
 </head>
 
@@ -134,68 +151,76 @@
 
 <div class="container">
 
-    <!-- BACK BUTTON -->
     <a href="javascript:history.back()" class="back-btn">← Back</a>
 
     <div class="card">
 
-        <h2>Full Student Profile</h2>
+        <div class="header">
+            <h2>Full Student Profile</h2>
+                    <a href="/exam/student/edit/{{ $student->id }}" class="btn">
+            Edit Name
+        </a>
+        </div>
 
         @if(session('success'))
-            <p class="success">{{ session('success') }}</p>
+            <div class="success">{{ session('success') }}</div>
         @endif
 
-        <!-- PERSONAL DETAILS -->
-        <h3>Personal Details</h3>
-        <div class="grid">
-            <div class="item"><span class="label">Student ID:</span> {{ $student->student_id }}</div>
-            <div class="item"><span class="label">Full Name:</span> {{ $student->fullname }}</div>
-            <div class="item"><span class="label">Exam Roll:</span> {{ $student->exam_roll }}</div>
-            <div class="item"><span class="label">Applicant ID:</span> {{ $student->applicant_id }}</div>
-            <div class="item"><span class="label">Gender:</span> {{ $student->gender }}</div>
-            <div class="item"><span class="label">DOB:</span> {{ $student->date_of_birth }}</div>
-            <div class="item"><span class="label">Mobile:</span> {{ $student->mobile_no }}</div>
-            <div class="item"><span class="label">Email:</span> {{ $student->em_address }}</div>
+        <!-- PERSONAL -->
+        <div class="section">
+            <h3>Personal Details</h3>
+            <div class="grid">
+                <div class="item"><span class="label">Student ID:</span> {{ $student->student_id }}</div>
+                <div class="item"><span class="label">Name:</span> {{ $student->fullname }}</div>
+                <div class="item"><span class="label">Roll:</span> {{ $student->exam_roll }}</div>
+                <div class="item"><span class="label">Applicant:</span> {{ $student->applicant_id }}</div>
+                <div class="item"><span class="label">Gender:</span> {{ $student->gender }}</div>
+                <div class="item"><span class="label">DOB:</span> {{ $student->date_of_birth }}</div>
+                <div class="item"><span class="label">Mobile:</span> {{ $student->mobile_no }}</div>
+                <div class="item"><span class="label">Email:</span> {{ $student->em_address }}</div>
+            </div>
         </div>
 
-        <!-- SSC INFO -->
-        <h3>SSC Information</h3>
-        <div class="grid">
-            <div class="item"><span class="label">SSC GPA:</span> {{ $student->ssc_gpa }}</div>
-            <div class="item"><span class="label">SSC Board:</span> {{ $student->ssc_board }}</div>
+        <!-- SSC -->
+        <div class="section">
+            <h3>SSC Information</h3>
+            <div class="grid">
+                <div class="item"><span class="label">GPA:</span> {{ $student->ssc_gpa }}</div>
+                <div class="item"><span class="label">Board:</span> {{ $student->ssc_board }}</div>
+            </div>
         </div>
 
-        <!-- HSC INFO -->
-        <h3>HSC Information</h3>
-        <div class="grid">
-            <div class="item"><span class="label">HSC GPA:</span> {{ $student->hsc_gpa }}</div>
-            <div class="item"><span class="label">HSC Board:</span> {{ $student->hsc_board }}</div>
+        <!-- HSC -->
+        <div class="section">
+            <h3>HSC Information</h3>
+            <div class="grid">
+                <div class="item"><span class="label">GPA:</span> {{ $student->hsc_gpa }}</div>
+                <div class="item"><span class="label">Board:</span> {{ $student->hsc_board }}</div>
+            </div>
         </div>
 
-        <!-- ADMISSION INFO -->
-        <h3>Admission Information</h3>
-        <div class="grid">
-            <div class="item"><span class="label">Faculty:</span> {{ $student->faculty }}</div>
-            <div class="item"><span class="label">Department:</span> {{ $student->department }}</div>
-            <div class="item"><span class="label">Hall:</span> {{ $student->hall }}</div>
-            <div class="item"><span class="label">Merit Position:</span> {{ $student->merit_position }}</div>
-            <div class="item"><span class="label">Quota:</span> {{ $student->quota }}</div>
+        <!-- ADMISSION -->
+        <div class="section">
+            <h3>Admission</h3>
+            <div class="grid">
+                <div class="item"><span class="label">Faculty:</span> {{ $student->faculty }}</div>
+                <div class="item"><span class="label">Department:</span> {{ $student->department }}</div>
+                <div class="item"><span class="label">Hall:</span> {{ $student->hall }}</div>
+                <div class="item"><span class="label">Merit:</span> {{ $student->merit_position }}</div>
+                <div class="item"><span class="label">Quota:</span> {{ $student->quota }}</div>
+            </div>
         </div>
 
-        <!-- PAYMENT INFO -->
-        <h3>Payment Information</h3>
-        <div class="grid">
-            <div class="item"><span class="label">Transaction ID:</span> {{ $student->payment_trxid }}</div>
-            <div class="item"><span class="label">Amount:</span> {{ $student->payment_amount }}</div>
+        <!-- PAYMENT -->
+        <div class="section">
+            <h3>Payment</h3>
+            <div class="grid">
+                <div class="item"><span class="label">Trx ID:</span> {{ $student->payment_trxid }}</div>
+                <div class="item"><span class="label">Amount:</span> {{ $student->payment_amount }}</div>
+            </div>
         </div>
-
-        <!-- EDIT BUTTON -->
-        <a href="/exam/student/edit/{{ $student->id }}" class="btn">
-            Edit Name Only
-        </a>
 
     </div>
-
 </div>
 
 </body>

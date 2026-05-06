@@ -13,7 +13,53 @@
 
         body {
             margin: 0;
-            background: #f5f6f8;
+            background: #f4f6f9;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100%;
+            background: #1f2937;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: #ddd;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .main {
+            margin-left: 220px;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .content {
             padding: 20px;
         }
 
@@ -37,16 +83,25 @@
             margin-top: 5px;
         }
 
-        .back-btn {
-            display: inline-block;
+        .action-bar {
+            display: flex;
+            justify-content: flex-end;
             margin-bottom: 15px;
-            padding: 8px 12px;
+        }
+
+        .btn-primary {
+            padding: 8px 14px;
             font-size: 14px;
-            background: #ffffff;
-            border: 1px solid #ddd;
+            background: #2563eb;
+            color: white;
+            border: none;
             border-radius: 6px;
             text-decoration: none;
-            color: #333;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
         }
 
         .card {
@@ -72,7 +127,6 @@
             background: #f9fafb;
         }
 
-        /* SIMPLE PAGINATION STYLE */
         .pagination {
             margin-top: 15px;
             display: flex;
@@ -105,69 +159,101 @@
             border-color: #2563eb;
         }
 
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="sidebar">
+    <h2>Super Admin</h2>
 
-    <div class="header">
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/admin/dashboard?section=students" class="active">Students</a>
+    <a href="{{ route('admin.logs') }}">Audit Logs</a>
+
+    <form method="POST" action="/logout" style="margin-top: 20px; padding: 0 20px;">
+        @csrf
+        <button class="btn-danger" style="width:100%;">Logout</button>
+    </form>
+</div>
+
+<div class="main">
+
+    <div class="topbar">
         <h1>All Students</h1>
-
-        <!-- SHOW ONLY TABLE NAME -->
-        <p class="meta">
-            Current Session/Table:
-            <b>{{ strtoupper($table) }}</b>
-        </p>
-
-        <p class="meta">
-            Total Students: {{ $students->total() }}
-        </p>
+        <div>Welcome, {{ auth()->user()->name }}</div>
     </div>
 
-    <a href="javascript:history.back()" class="back-btn">← Back</a>
+    <div class="content">
 
-    <a href="{{ url('students/pdf') }}" target="_blank">
-    Download PDF
-    </a>
+        <div class="container">
 
+            <div class="header">
+                <h1>All Students</h1>
 
-    <div class="card">
+                <p class="meta">
+                    Current Session/Table:
+                    <b>{{ strtoupper($table) }}</b>
+                </p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Exam Roll</th>
-                    <th>Student ID</th>
-                    <th>Full Name</th>
-                    <th>Department</th>
-                    <th>Hall</th>
-                    <th>Mobile</th>
-                </tr>
-            </thead>
+                <p class="meta">
+                    Total Students: {{ $students->total() }}
+                </p>
+            </div>
 
-            <tbody>
-                @foreach($students as $student)
-                    <tr>
-                        <td>{{ $student->id }}</td>
-                        <td>{{ $student->exam_roll }}</td>
-                        <td>{{ $student->student_id }}</td>
-                        <td>{{ $student->fullname }}</td>
-                        <td>{{ $student->department }}</td>
-                        <td>{{ $student->hall }}</td>
-                        <td>{{ $student->mobile_no }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+            <!-- RIGHT-ALIGNED DOWNLOAD BUTTON -->
+            <div class="action-bar">
+                <a href="{{ url('students/pdf') }}" target="_blank" class="btn-primary">
+                    Download PDF
+                </a>
+            </div>
 
-    </div>
+            <div class="card">
 
-    <!-- CLEAN PAGINATION -->
-    <div class="pagination">
-        {{ $students->appends(['table' => $table])->links() }}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Exam Roll</th>
+                            <th>Student ID</th>
+                            <th>Full Name</th>
+                            <th>Department</th>
+                            <th>Hall</th>
+                            <th>Mobile</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($students as $student)
+                            <tr>
+                                <td>{{ $student->id }}</td>
+                                <td>{{ $student->exam_roll }}</td>
+                                <td>{{ $student->student_id }}</td>
+                                <td>{{ $student->fullname }}</td>
+                                <td>{{ $student->department }}</td>
+                                <td>{{ $student->hall }}</td>
+                                <td>{{ $student->mobile_no }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="pagination">
+                {{ $students->appends(['table' => $table])->links() }}
+            </div>
+
+        </div>
+
     </div>
 
 </div>

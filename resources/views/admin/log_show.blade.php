@@ -6,10 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
+        }
+
+        body {
             margin: 0;
             background: #f4f6f9;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100%;
+            background: #1f2937;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: #ddd;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .main {
+            margin-left: 220px;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .content {
             padding: 20px;
         }
 
@@ -20,14 +70,14 @@
 
         .card {
             background: white;
-            padding: 20px;
+            padding: 18px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
 
         h2 {
             margin-top: 0;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .row {
@@ -53,7 +103,7 @@
         .delete { background: #dc2626; }
 
         .field {
-            margin-top: 12px;
+            margin-top: 10px;
             padding: 10px;
             border: 1px solid #eee;
             border-radius: 6px;
@@ -63,6 +113,7 @@
         .field-name {
             font-weight: bold;
             margin-bottom: 6px;
+            font-size: 13px;
         }
 
         .old {
@@ -71,6 +122,7 @@
             padding: 4px 8px;
             border-radius: 5px;
             display: inline-block;
+            font-size: 13px;
         }
 
         .new {
@@ -79,6 +131,7 @@
             padding: 4px 8px;
             border-radius: 5px;
             display: inline-block;
+            font-size: 13px;
         }
 
         .arrow {
@@ -86,72 +139,124 @@
             font-weight: bold;
         }
 
-        a {
+        .back-btn {
             display: inline-block;
             margin-top: 15px;
+            padding: 8px 12px;
+            background: #2563eb;
+            color: white;
+            border-radius: 6px;
             text-decoration: none;
-            color: #2563eb;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="sidebar">
+    <h2>Super Admin</h2>
 
-    <div class="card">
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/admin/dashboard?section=students">Students</a>
+    <a href="{{ route('admin.logs') }}" class="active">Audit Logs</a>
 
-        <h2>Audit Log Details</h2>
+    <form method="POST" action="/logout" style="margin-top: 20px; padding: 0 20px;">
+        @csrf
+        <button class="btn-danger" style="width:100%;">Logout</button>
+    </form>
+</div>
 
-        <div class="row">
-            <span class="label">User:</span>
-            {{ $log->user->name ?? 'System' }}
-        </div>
+<div class="main">
 
-        <div class="row">
-            <span class="label">Action:</span>
-            <span class="badge {{ strtolower($log->action) }}">
-                {{ strtoupper($log->action) }}
-            </span>
-        </div>
+    <div class="topbar">
+        <h1>Audit Log Details</h1>
+        <div>Welcome, {{ auth()->user()->name }}</div>
+    </div>
 
-        <div class="row">
-            <span class="label">Model:</span>
-            {{ class_basename($log->model_type) }}
-        </div>
+    <div class="content">
 
-        <div class="row">
-            <span class="label">Date:</span>
-            {{ $log->created_at->format('Y-m-d H:i:s') }}
-        </div>
+        <div class="container">
 
-        <hr>
+            <div class="card">
 
-        <h3>Changes</h3>
+                <h2>Audit Log Details</h2>
 
-        @foreach($log->old_values as $field => $change)
+                <div class="row">
+                    <span class="label">User:</span>
+                    {{ $log->user->name ?? 'System' }}
+                </div>
 
-            <div class="field">
-
-                <div class="field-name">{{ $field }}</div>
-
-                <div>
-                    <span class="old">
-                        {{ $change['old'] ?? '-' }}
-                    </span>
-
-                    <span class="arrow">→</span>
-
-                    <span class="new">
-                        {{ $change['new'] ?? '-' }}
+                <div class="row">
+                    <span class="label">Action:</span>
+                    <span class="badge {{ strtolower($log->action) }}">
+                        {{ strtoupper($log->action) }}
                     </span>
                 </div>
 
+                <div class="row">
+                    <span class="label">Model:</span>
+                    {{ class_basename($log->model_type) }}
+                </div>
+
+                <div class="row">
+                    <span class="label">Date:</span>
+                    {{ $log->created_at->format('Y-m-d H:i:s') }}
+                </div>
+
+                <hr>
+
+                <h3>Changes</h3>
+
+                @php
+                    $old = $log->old_values ?? [];
+                    $new = $log->new_values ?? [];
+                @endphp
+
+                @foreach($old as $field => $oldValue)
+
+                    <div class="field">
+
+                        <div class="field-name">
+                            {{ str_replace('_', ' ', ucfirst($field)) }}
+                        </div>
+
+                        <div>
+                            <span class="old">
+                                {{ is_array($oldValue) ? json_encode($oldValue) : $oldValue }}
+                            </span>
+
+                            <span class="arrow">→</span>
+
+                            <span class="new">
+                                {{ is_array($new[$field] ?? null) ? json_encode($new[$field]) : ($new[$field] ?? '-') }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+                <a href="{{ route('admin.logs') }}" class="back-btn">
+                    Back to Logs
+                </a>
+
             </div>
 
-        @endforeach
-
-        <a href="{{ route('admin.logs') }}">← Back to Logs</a>
+        </div>
 
     </div>
 

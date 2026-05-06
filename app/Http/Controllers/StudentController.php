@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-
-
 class StudentController extends Controller
 {
 
@@ -98,7 +96,7 @@ class StudentController extends Controller
             $query->where('department', $department);
         }
 
-        $students = $query->paginate(10);
+        $students = $query->paginate(20);
 
         return view('admin.students', compact(
             'students',
@@ -121,7 +119,7 @@ class StudentController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | EXAM: SEARCH STUDENT
+    | EXAM: SEARCH STUDENT (FIXED FLOW)
     |--------------------------------------------------------------------------
     */
     public function search(Request $request)
@@ -141,12 +139,23 @@ class StudentController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | SHOW STUDENT
+    | SHOW STUDENT (FIXED - IMPORTANT)
     |--------------------------------------------------------------------------
+    | This now matches your route:
+    | /exam/student/show?student_id=101
     */
-    public function show($id)
+    public function show(Request $request)
     {
-        $student = Student::findOrFail($id);
+        $request->validate([
+            'student_id' => 'required'
+        ]);
+
+        $student = Student::where('student_id', $request->student_id)->first();
+
+        if (!$student) {
+            return back()->with('error', 'Student not found');
+        }
+
         return view('exam.show', compact('student'));
     }
 
@@ -199,19 +208,22 @@ class StudentController extends Controller
         ]);
     }
 
-    //pdf export
+    /*
+    |--------------------------------------------------------------------------
+    | PDF EXPORT
+    |--------------------------------------------------------------------------
+    */
     public function exportPdf(Request $request)
     {
         $table = $request->get('table', 'student13');
 
         $students = DB::table($table)
-            ->limit(200)   // CRITICAL FIX
+            ->limit(200)
             ->get();
 
         $pdf = Pdf::loadView('admin.students_pdf', compact('students', 'table'));
 
         return $pdf->download('admin_students_list.pdf');
     }
-
 }
 

@@ -41,6 +41,11 @@
             font-size: 14px;
         }
 
+        .sidebar a.active {
+            background: #374151;
+            color: white;
+        }
+
         .sidebar a:hover {
             background: #374151;
             color: white;
@@ -124,13 +129,26 @@
 
 <body>
 
+@php
+    $section = request('section', 'dashboard');
+@endphp
+
 <div class="sidebar">
     <h2>Super Admin</h2>
 
-    <a href="#">Dashboard</a>
-    <a href="#">Users</a>
-    <a href="#">Students</a>
-    <a href="{{ route('admin.logs') }}">Audit Logs</a>
+    <a href="/admin/dashboard?section=dashboard"
+       class="{{ $section == 'dashboard' ? 'active' : '' }}">
+       Dashboard
+    </a>
+
+    <a href="/admin/dashboard?section=students"
+       class="{{ $section == 'students' ? 'active' : '' }}">
+       Students
+    </a>
+
+    <a href="{{ route('admin.logs') }}">
+       Audit Logs
+    </a>
 
     <form method="POST" action="/logout" style="margin-top: 20px; padding: 0 20px;">
         @csrf
@@ -141,11 +159,16 @@
 <div class="main">
 
     <div class="topbar">
-        <h1>Dashboard</h1>
+        <h1>
+            {{ $section == 'students' ? 'Students' : 'Dashboard' }}
+        </h1>
         <div>Welcome, {{ auth()->user()->name }}</div>
     </div>
 
     <div class="content">
+
+        {{-- ================= DASHBOARD ================= --}}
+        @if($section == 'dashboard')
 
         <!-- USERS -->
         <div class="card">
@@ -173,13 +196,15 @@
                         <td>
                             <form method="POST" action="/admin/users/{{ $user->id }}/role">
                                 @csrf
+                                @php
+                                $currentRole = $user->getRoleNames()->first();
+                            @endphp
 
-                                <select name="role">
-                                    <option value="dept">Dept</option>
-                                    <option value="exam-controller">Exam Controller</option>
-                                    <option value="super-admin">Super Admin</option>
-                                </select>
-
+                            <select name="role">
+                                <option value="dept" {{ $currentRole == 'dept' ? 'selected' : '' }}>Dept</option>
+                                <option value="exam-controller" {{ $currentRole == 'exam-controller' ? 'selected' : '' }}>Exam Controller</option>
+                                <option value="super-admin" {{ $currentRole == 'super-admin' ? 'selected' : '' }}>Super Admin</option>
+                            </select>
                                 <button type="submit" class="btn">Assign</button>
                             </form>
                         </td>
@@ -187,44 +212,6 @@
                 @endforeach
                 </tbody>
             </table>
-        </div>
-
-        <!-- STUDENTS -->
-        <div class="card">
-            <h2>Students</h2>
-
-            <!-- FILTER FORM (SESSION + DEPT) -->
-            <form method="GET" action="{{ url('/admin/dashboard') }}" style="margin-bottom: 15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-
-                <!-- SESSION -->
-                <select name="table" onchange="this.form.submit()">
-                    @foreach($tableMap as $key => $label)
-                        <option value="{{ $key }}" {{ $table == $key ? 'selected' : '' }}>
-                            {{ $label }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <!-- DEPT FILTER -->
-                <select name="department" onchange="this.form.submit()">
-                    <option value="">All Dept</option>
-                    <option value="CSE" {{ request('department') == 'CSE' ? 'selected' : '' }}>CSE</option>
-                    <option value="EEE" {{ request('department') == 'EEE' ? 'selected' : '' }}>EEE</option>
-                    <option value="BBA" {{ request('department') == 'BBA' ? 'selected' : '' }}>BBA</option>
-                </select>
-
-            </form>
-
-            <p style="font-size: 13px; color: #555;">
-                Current Table: <b>{{ strtoupper($table) }}</b>
-                @if(request('department'))
-                    | Dept: <b>{{ request('department') }}</b>
-                @endif
-            </p>
-
-            <a href="/admin/students?table={{ $table }}&department={{ request('department') }}">
-                <button class="btn">View Full Students List</button>
-            </a>
         </div>
 
         <!-- RECENT LOGS -->
@@ -255,8 +242,53 @@
 
         </div>
 
+        @endif
+
+
+        {{-- ================= STUDENTS ================= --}}
+        @if($section == 'students')
+
+        <div class="card">
+            <h2>Students</h2>
+
+            <form method="GET" action="{{ url('/admin/dashboard') }}" style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
+
+                <input type="hidden" name="section" value="students">
+
+                <select name="table" onchange="this.form.submit()">
+                    @foreach($tableMap as $key => $label)
+                        <option value="{{ $key }}" {{ $table == $key ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <select name="department" onchange="this.form.submit()">
+                    <option value="">All Dept</option>
+                    <option value="CSE" {{ request('department') == 'CSE' ? 'selected' : '' }}>CSE</option>
+                    <option value="EEE" {{ request('department') == 'EEE' ? 'selected' : '' }}>EEE</option>
+                    <option value="BBA" {{ request('department') == 'BBA' ? 'selected' : '' }}>BBA</option>
+                </select>
+
+            </form>
+
+            <p style="font-size: 13px; color: #555;">
+                Current Table: <b>{{ strtoupper($table) }}</b>
+                @if(request('department'))
+                    | Dept: <b>{{ request('department') }}</b>
+                @endif
+            </p>
+
+            <a href="/admin/students?table={{ $table }}&department={{ request('department') }}">
+                <button class="btn">View Full Students List</button>
+            </a>
+        </div>
+
+        @endif
+
     </div>
 </div>
 
 </body>
 </html>
+

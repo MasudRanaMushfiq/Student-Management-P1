@@ -145,13 +145,24 @@ Route::middleware('auth')->group(function () {
                 return view('exam.home');
             })->name('exam.home');
 
-            Route::get('/student/search', [StudentController::class, 'searchPage'])->name('exam.student.search');
-            Route::get('/student/search-result', [StudentController::class, 'search'])->name('exam.student.result');
+            /*
+            | FIXED: removed {id} to use student_id query
+            | /exam/student/show?student_id=101
+            */
+            Route::get('/student/search', [StudentController::class, 'searchPage'])
+                ->name('exam.student.search');
 
-            Route::get('/student/show/{id}', [StudentController::class, 'show'])->name('exam.student.show');
+            Route::get('/student/show', [StudentController::class, 'show'])
+                ->name('exam.student.show');
 
-            Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('exam.student.edit');
-            Route::post('/student/update/{id}', [StudentController::class, 'update'])->name('exam.student.update');
+            Route::get('/student/search-result', [StudentController::class, 'search'])
+                ->name('exam.student.result');
+
+            Route::get('/student/edit/{id}', [StudentController::class, 'edit'])
+                ->name('exam.student.edit');
+
+            Route::post('/student/update/{id}', [StudentController::class, 'update'])
+                ->name('exam.student.update');
         });
 
 });
