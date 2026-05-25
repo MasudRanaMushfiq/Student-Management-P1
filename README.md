@@ -1,58 +1,299 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Student Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> A full-featured student management web application built with **Laravel 13**, featuring role-based access control, a modular architecture, a RESTful API, and an admin dashboard.
 
-## About Laravel
+[![PHP](https://img.shields.io/badge/PHP-8.3%2B-8892BF?logo=php)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?logo=laravel)](https://laravel.com)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Table of Contents
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+- [Environment Variables](#environment-variables)
+- [Database](#database)
+- [API Reference](#api-reference)
+- [Roles & Permissions](#roles--permissions)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Overview
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The **Student Management System** is a Laravel-based web application designed to streamline the administration of student records. It supports multiple user roles (Admin, Department Staff, Exam Staff), provides a full CRUD interface for student data, exposes a versioned REST API, and includes audit logging and PDF export capabilities.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Features
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Authentication** — Secure login and registration via Laravel Breeze (web) and Laravel Sanctum (API)
+- **Role-Based Access Control** — Admin, Department, and Exam roles with granular permission management powered by Spatie Laravel Permission
+- **Student CRUD** — Create, read, update, and delete student records with advanced search, bulk search, and filtering
+- **Admin Dashboard** — User management, role assignment, audit log viewing
+- **Department Portal** — Department-specific student listing, statistics, suggestions, and CSV/Excel export
+- **Exam Portal** — Search and edit student records for examination purposes
+- **REST API (v1)** — Full student resource API under `/api/v1/students` with Sanctum token authentication
+- **PDF Export** — Generate student record PDFs using `barryvdh/laravel-dompdf`
+- **Audit Logging** — Track key actions across the system
+- **Modular Architecture** — Student module isolated under `Modules/Student` using `nwidart/laravel-modules`
+- **Vite** — Modern frontend asset bundling
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Laravel 13.x |
+| Language | PHP 8.3+ |
+| Authentication | Laravel Breeze, Laravel Sanctum 4.x |
+| Authorization | Spatie Laravel Permission 7.x |
+| Modules | nwidart/laravel-modules 13.x |
+| PDF Generation | barryvdh/laravel-dompdf 3.x |
+| Frontend | Blade Templates, Vite, CSS |
+| Database | MySQL / SQLite |
+| Testing | PHPUnit 12.x |
+| Code Style | Laravel Pint |
+
+---
+
+## Project Structure
+
+```
+Student-Management-P1/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       ├── Admin/
+│   │       │   ├── DashboardController.php
+│   │       │   └── UserManagementController.php
+│   │       ├── AuthController.php          # API authentication
+│   │       ├── WebAuthController.php       # Web authentication
+│   │       ├── StudentController.php       # Core student CRUD + PDF
+│   │       ├── DepartmentController.php    # Department portal
+│   │       └── ExamController.php          # Exam portal
+│   └── Models/
+│       ├── User.php
+│       ├── Student.php
+│       ├── Department.php
+│       ├── Hall.php
+│       └── AuditLog.php
+├── Modules/
+│   └── Student/                            # Modular student resource
+│       └── Http/Controllers/
+│           └── StudentController.php       # Versioned API controller
+├── database/
+│   └── migrations/                         # 9 migration files
+├── resources/
+│   └── views/                              # Blade templates
+├── routes/
+│   ├── web.php
+│   └── api.php
+├── stubs/nwidart-stubs/                    # Module scaffolding stubs
+└── tests/
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
+
+## Getting Started
+
+### Prerequisites
+
+- PHP **8.3** or higher
+- Composer
+- Node.js & npm
+- A database: **MySQL** (recommended) or SQLite
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/MasudRanaMushfiq/Student-Management-P1.git
+   cd Student-Management-P1
+   ```
+
+2. **Run the automated setup script** (installs all dependencies, generates app key, and runs migrations):
+
+   ```bash
+   composer run setup
+   ```
+
+   Or run each step manually:
+
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   php artisan migrate
+   npm install
+   npm run build
+   ```
+
+3. **Seed roles and permissions** *(if a seeder is available)*:
+
+   ```bash
+   php artisan db:seed
+   ```
+
+### Running the Application
+
+Start all services concurrently (server, queue, log watcher, Vite dev server):
+
+```bash
+composer run dev
+```
+
+Or start just the Laravel development server:
+
+```bash
+php artisan serve
+```
+
+The application will be available at `http://localhost:8000`.
+
+---
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and configure the following key values:
+
+```env
+APP_NAME="Student Management System"
+APP_ENV=local
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=student_management
+DB_USERNAME=root
+DB_PASSWORD=
+
+SANCTUM_STATEFUL_DOMAINS=localhost
+```
+
+---
+
+## Database
+
+Migrations create the following tables:
+
+| Migration | Table |
+|---|---|
+| `create_users_table` | `users` |
+| `create_cache_table` | `cache` |
+| `create_jobs_table` | `jobs` |
+| `create_personal_access_tokens_table` | `personal_access_tokens` |
+| `create_departments_table` | `departments` |
+| `create_halls_table` | `halls` |
+| `create_students_table` | `students` |
+| `create_permission_tables` | `roles`, `permissions`, `model_has_roles`, ... |
+| `create_audit_logs_table` | `audit_logs` |
+
+Run migrations:
+
+```bash
+php artisan migrate
+```
+
+---
+
+## API Reference
+
+### Authentication (Sanctum)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/register` | Register a new user |
+| `POST` | `/api/login` | Login and receive API token |
+| `POST` | `/api/logout` | Revoke token |
+| `GET` | `/api/user` | Get authenticated user |
+
+### Student Resource (v1)
+
+Base URL: `/api/v1/students`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/students` | List all students |
+| `POST` | `/api/v1/students` | Create a new student |
+| `GET` | `/api/v1/students/{student}` | Get a single student |
+| `PUT/PATCH` | `/api/v1/students/{student}` | Update a student |
+| `DELETE` | `/api/v1/students/{student}` | Delete a student |
+
+All API endpoints require a valid **Sanctum Bearer token** in the `Authorization` header:
+
+```
+Authorization: Bearer <your-token>
+```
+
+---
+
+## Roles & Permissions
+
+The application uses [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) for role-based access control.
+
+| Role | Access |
+|---|---|
+| **Admin** | Full access — dashboard, user management, role assignment, audit logs, all students |
+| **Department** | Department portal — student listing, search, statistics, export |
+| **Exam** | Exam portal — student search, view, and record editing |
+
+Roles are assigned via the admin panel at `POST /admin/users/{user}/role`.
+
+---
+
+## Testing
+
+Run the full test suite:
+
+```bash
+composer run test
+```
+
+Or directly with PHPUnit:
+
+```bash
+php artisan test
+```
+
+---
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Contributions are welcome! Please follow these steps:
 
-## Code of Conduct
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Open a Pull Request
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Please make sure your code passes linting with Laravel Pint before submitting:
 
-## Security Vulnerabilities
+```bash
+./vendor/bin/pint
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+> **Author:** [MasudRanaMushfiq](https://github.com/MasudRanaMushfiq)
+>
+> 
